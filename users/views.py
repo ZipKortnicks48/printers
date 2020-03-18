@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from users.models import User
+from users.serializers import UserSerializer
 import jwt
 import printers.settings as settings
 class CreateUserAPIView(APIView):
@@ -39,9 +40,23 @@ def authenticate_user(request):
             except Exception as e:
                 raise e
         else:
-            res = {
-                'error': 'can not authenticate with the given credentials or the account has been deactivated'}
+            res = {'error': 'Неверный пароль'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
     except:
-        res = {'error': 'please provide a email and a password'}
-        return Response(res)
+        res = {'error': 'Проверьте правильность введенных данных.'}
+        return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateUserAPIView(APIView):
+    # Allow any user (authenticated or not) to access this url 
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        try:
+            user = request.data
+            serializer = UserSerializer(data=user)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            res={'error': 'Проверьте правильность введенных данных.'}
+            return Response(res,status=status.HTTP_400_BAD_REQUEST)

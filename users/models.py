@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
+from city.models import City
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -33,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
-    
+    city=models.ForeignKey(City,related_name="user_have_city",on_delete=models.CASCADE,default='1')
     objects = UserManager()
     
     USERNAME_FIELD = 'email'
