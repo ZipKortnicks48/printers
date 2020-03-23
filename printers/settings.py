@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'city',
-    'printer'
+    'printer',
+    'req'
 ]
 
 MIDDLEWARE = [
