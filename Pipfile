@@ -11,6 +11,7 @@ djangorestframework = "*"
 psycopg2 = "*"
 django-pdb = "*"
 passlib = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.8"

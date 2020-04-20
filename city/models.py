@@ -10,4 +10,5 @@ class Cabinet(models.Model):
     number=models.IntegerField()
     city=models.ForeignKey(City,related_name="cabinet_have_city",on_delete=models.CASCADE)
     def __str__(self):
-        return self.name
+        city=City.objects.get(id=self.city.id)
+        return self.city.name+":"+self.name 
