@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth.signals import user_logged_in
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 from users.models import User
 from users.serializers import UserSerializer
 from rest_framework_jwt.settings import api_settings
@@ -28,9 +28,12 @@ def authenticate_user(request):
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
         name = request.data['name']
-        # import pdb; pdb.set_trace()
         password = request.data['password']
-        user = User.objects.get(name=name)
+        try:
+            user = User.objects.get(name=name)
+        except ObjectDoesNotExist:
+            res = {'error': 'Неверный логин или пароль'}
+            return Response(res, status=status.HTTP_403_FORBIDDEN)
         if check_password(password,user.password):
             try:
                 payload = jwt_payload_handler(user)
@@ -43,7 +46,7 @@ def authenticate_user(request):
             except Exception as e:
                 raise e
         else:
-            res = {'error': 'Неверный пароль'}
+            res = {'error': 'Неверный логин или пароль'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
     # except:
     #     res = {'error': 'Проверьте правильность введенных данных.'}
