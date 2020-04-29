@@ -12,6 +12,7 @@ class Req(models.Model):
     description=models.TextField()
     date=models.DateField(default=datetime.date.today)
     deadline=models.DateField()
+    finishdate=models.DateField(blank=True,default=datetime.date.today)
     cabinet=models.ForeignKey(Cabinet,related_name="req_have_cabinet",on_delete=models.CASCADE)
     user=models.ForeignKey(User,related_name="req_have_user",on_delete=models.CASCADE)
     status=models.BooleanField(default=False)

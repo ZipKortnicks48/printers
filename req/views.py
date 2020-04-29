@@ -10,6 +10,7 @@ from rest_framework import status
 from city.models import Cabinet
 from users.models import User
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 
 #API района!
 
@@ -17,8 +18,16 @@ from rest_framework.response import Response
 
 class ReqView(ListCreateAPIView):
     serializer_class=ReqSerializer
+    filter_backends =(filters.SearchFilter,DjangoFilterBackend,filters.OrderingFilter)
+    search_fields = ('shortname','id',)
+    filterset_fields = ('date', 'cabinet','status',)
+    ordering=('-date')
+    pagination_class=LimitOffsetPagination
     def get_queryset(self):#получаем заявки для района пользователя
         city_id=self.request.user.city.id
+        # cabinet=self.request.query_params.get(cabinet,None)
+        # status=self.request.query_params.get(status,None)
+        # date=self.request.query_params.get(date,None)
         cabinets=Cabinet.objects.all().filter(city_id=city_id)
         reqs=Req.objects.all().filter(cabinet_id__in=Subquery(cabinets.values('id')))
         return reqs
@@ -32,13 +41,16 @@ class ReqView(ListCreateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def list(self, request):#публикуем заявки для района пользователя 
-        queryset = self.get_queryset()
-        filter_backends = [filters.SearchFilter,DjangoFilterBackend]
-        search_fields = ['shortname','id']
-        filterset_fields = ['date', 'cabinet','status']
-        ordering_fields=['date','status','checkout']
-        serializer = ReqSerializer(queryset, many=True)
+        queryset = self.filter_queryset(self.get_queryset())
+        page=self.paginate_queryset(queryset)
+        # serializer = ReqSerializer(queryset, many=True)
+        # return Response(serializer.data)
+        if page is not None:
+            serializer = ReqSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = Reqserializer(queryset, many=True)
         return Response(serializer.data)
+        
     
 #просмотр заявки и удаление
 
