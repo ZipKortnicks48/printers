@@ -15,8 +15,10 @@ class Req(models.Model):
     finishdate=models.DateField(blank=True,default=datetime.date.today)
     cabinet=models.ForeignKey(Cabinet,related_name="req_have_cabinet",on_delete=models.CASCADE)
     user=models.ForeignKey(User,related_name="req_have_user",on_delete=models.CASCADE)
-    status=models.BooleanField(default=False)
+    executor=models.ForeignKey(User,related_name="req_have_executor",on_delete=models.CASCADE,blank=True,null=True)
+    status=models.CharField(max_length=1,default="1")
     checkout=models.BooleanField(default=False)
+    phone=models.CharField(max_length=11,blank=True,null=True)
     def __str__(self):
         cabinet=Cabinet.objects.get(id=self.cabinet.id)
         return str(self.id)+". "+cabinet.__str__()+" - "+self.shortname

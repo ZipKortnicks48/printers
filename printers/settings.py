@@ -69,7 +69,7 @@ REST_FRAMEWORK = {
     'rest_framework_jwt.authentication.JSONWebTokenAuthentication'
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10
 
 }
@@ -131,7 +131,7 @@ JWT_AUTH = {
  
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_PAYLOAD_HANDLER':'rest_framework_jwt.utils.jwt_payload_handler',
     'JWT_ENCODE_HANDLER':

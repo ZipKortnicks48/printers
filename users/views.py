@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from users.models import User
@@ -24,7 +25,7 @@ import printers.settings as settings
 @api_view(['POST'])
 @permission_classes([AllowAny, ])
 def authenticate_user(request):
-    # try:
+    try:
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
         name = request.data['name']
@@ -48,14 +49,13 @@ def authenticate_user(request):
         else:
             res = {'error': 'Неверный логин или пароль'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
-    # except:
-    #     res = {'error': 'Проверьте правильность введенных данных.'}
-    #     return Response(res, status=status.HTTP_400_BAD_REQUEST)
-
+    except:
+         res = {'error': 'Проверьте правильность введенных данных.'}
+         return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminUser,)
     def post(self, request):
         try:
             user = request.data
@@ -66,3 +66,9 @@ class CreateUserAPIView(APIView):
         except:
             res={'error': 'Проверьте правильность введенных данных.'}
             return Response(res,status=status.HTTP_400_BAD_REQUEST)
+
+
+class FindAdminUserAPIView(ListAPIView):
+    permission_classes=[IsAdminUser, ]
+    serializer_class=UserSerializer
+    queryset=User.objects.all().filter(is_staff=True)

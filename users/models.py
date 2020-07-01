@@ -32,7 +32,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
-    city=models.ForeignKey(City,related_name="user_have_city",on_delete=models.CASCADE,default='1')
+    mobile_phone=models.CharField(max_length=10,blank=True,null=True)
+    phone=models.CharField(max_length=10,blank=True,null=True)
+    surname=models.CharField(max_length=30,blank=True,null=True)
+    city=models.ForeignKey(City,related_name="user_have_city",on_delete=models.CASCADE,blank=True,null=True)
     objects = UserManager()
     
     USERNAME_FIELD = 'name'
