@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from django.db.models.query import QuerySet
+import telebot
 
 #API района!
 
@@ -39,6 +40,9 @@ class ReqView(ListCreateAPIView):
         serializer = self.serializer_class(req,data=request.data)
         if serializer.is_valid():
             serializer.save()
+            TOKEN='1191171470:AAFD2RFpUR0-W_RTqO4uco2WpCAZOCT1b4M'
+            bot=telebot.TeleBot(TOKEN)
+            bot.send_message('-488020289','*Поступление новой заявки*\n')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
