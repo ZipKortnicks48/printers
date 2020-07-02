@@ -42,7 +42,8 @@ class ReqView(ListCreateAPIView):
             serializer.save()
             TOKEN='1191171470:AAFD2RFpUR0-W_RTqO4uco2WpCAZOCT1b4M'
             bot=telebot.TeleBot(TOKEN)
-            bot.send_message('-488020289','*Поступление новой заявки*\n')
+            text='*Поступление новой заявки*\n\n'+request.data['shortname']+'\n\n_Автор:_ '+request.data['user']['surname']+'\n_Телефон:_ '+request.data['phone']
+            bot.send_message('-488020289',text,parse_mode="Markdown")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
