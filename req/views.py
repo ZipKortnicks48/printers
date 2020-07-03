@@ -42,8 +42,7 @@ class ReqView(ListCreateAPIView):
             serializer.save()
             TOKEN='1191171470:AAFD2RFpUR0-W_RTqO4uco2WpCAZOCT1b4M'
             bot=telebot.TeleBot(TOKEN)
-            text='*Поступление новой заявки*\n\n'+request.data.get('shortname')+'\n\n_Автор:_ '+request.data.get('user').get('surname')+'\n_Телефон:_ '+request.data.get('phone')
-            import pdb;pdb.set_trace()
+            text='*Поступление новой заявки*\n\n'+request.data['shortname']+'\n\n_Автор:_ '+request.user.surname+'\n_Телефон:_ '+request.data['phone']
             bot.send_message('-488020289',text,parse_mode="Markdown")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -169,6 +168,10 @@ class CommentView(ListCreateAPIView):
         req_id=request.data.get('req')
         req=Req.objects.all().filter(id=req_id).first()
         comment = Comment(user=self.request.user,req=req)
+        TOKEN='1191171470:AAFD2RFpUR0-W_RTqO4uco2WpCAZOCT1b4M'
+        bot=telebot.TeleBot(TOKEN)
+        text='*Новый комментарий*\n\n'+request.data['text']+'\n\n_Автор:_ '+request.user.surname+'\n_Номер заявки:_ '+req_id
+        bot.send_message('-488020289',text,parse_mode="Markdown")
         serializer = self.serializer_class(comment,data=request.data)
         if serializer.is_valid():
             serializer.save()
