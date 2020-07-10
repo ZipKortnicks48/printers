@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/',include('users.urls')),
     path('req/',include('req.urls')),
-    path('cities/',include('city.urls'))
+    path('cities/',include('city.urls')),
+    path('printers/',include('printer.urls'))
 ]
