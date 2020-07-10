@@ -20,7 +20,7 @@ from email_sender import email_sender
 
 #получаем принтеры в районе, который запрашиваем с фильтрами
 class WorkUnitView(ListCreateAPIView):
-    # permission_classes=[IsAuthenticated,]
+    permission_classes=[IsAuthenticated,]
     filter_backends=(DjangoFilterBackend,)
     pagination_class=LimitOffsetPagination
     filterset_fields=('printer','cabinet','status')
@@ -41,6 +41,7 @@ class WorkUnitView(ListCreateAPIView):
             return Response(serializer.data)    
 #получить картриджи по модели принтера
 class ModelCartridgeView(ListAPIView):
+    permission_classes=[IsAuthenticated,]
     serializer_class=ModelCartridgeSerializer
     def get_queryset(self):
         printer_id=self.request.query_params.get('printer',None)
@@ -52,6 +53,7 @@ class ModelCartridgeView(ListAPIView):
         return Response(serializer.data) 
 #отправка комментария о поломке из комплекса
 class BrokeView(ListCreateAPIView):
+    permission_classes=[IsAuthenticated,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         city=request.user.city.name
@@ -71,6 +73,7 @@ class BrokeView(ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #перевод в диагностику
 class DiagnosticView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
@@ -89,6 +92,7 @@ class DiagnosticView(ListCreateAPIView):
 
 #отправка в ремонт
 class ServView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         comment=request.data.get('comment')
@@ -110,6 +114,7 @@ class ServView(ListCreateAPIView):
 
 #забрали из ремонта
 class WaitingView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
@@ -127,6 +132,7 @@ class WaitingView(ListCreateAPIView):
 
 #неполадки устранены своими силами
 class ServUsView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
@@ -144,6 +150,7 @@ class ServUsView(ListCreateAPIView):
 
 #возвращение принтера в комплекс после ремонта, выдача
 class RetView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
@@ -160,6 +167,7 @@ class RetView(ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #перемещение принтера в другой район/кабинет
 class MoveView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
@@ -182,6 +190,7 @@ class MoveView(ListCreateAPIView):
 
 #списание принтера
 class DeleteView(ListCreateAPIView):
+    permission_classes=[IsAdminUser,]
     queryset=ActPrinter.objects.all()
     def create(self, request, *args, **kwargs):
         printer_id=request.data.get('printer')
