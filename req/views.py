@@ -53,7 +53,7 @@ class ReqView(ListCreateAPIView):
         if page is not None:
             serializer = ReqSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = Reqserializer(queryset, many=True)
+        serializer = ReqSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
@@ -109,7 +109,7 @@ class ReqAdminView(ListAPIView):
         if page is not None:
             serializer = ReqSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = Reqserializer(queryset, many=True)
+        serializer = ReqSerializer(queryset, many=True)
         return Response(serializer.data)
 
 #назначение ответственного задаче

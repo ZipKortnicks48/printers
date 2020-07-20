@@ -1,11 +1,12 @@
 from django.shortcuts import render
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth.signals import user_logged_in
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView,CreateAPIView
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from users.models import User
@@ -53,19 +54,18 @@ def authenticate_user(request):
          res = {'error': 'Проверьте правильность введенных данных.'}
          return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
-class CreateUserAPIView(APIView):
+class CreateUserAPIView(CreateAPIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (IsAdminUser,)
     def post(self, request):
-        try:
-            user = request.data
-            serializer = UserSerializer(data=user)
+        #try:
+            serializer = UserSerializer(data={"name":request.data.get('name'),'password':make_password(request.data.get('password'))})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except:
-            res={'error': 'Проверьте правильность введенных данных.'}
-            return Response(res,status=status.HTTP_400_BAD_REQUEST)
+        #except:
+        #    res={'error': 'Проверьте правильность введенных данных.'}
+        #    return Response(res,status=status.HTTP_400_BAD_REQUEST)
 
 
 class FindAdminUserAPIView(ListAPIView):

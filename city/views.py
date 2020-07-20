@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from rest_framework.pagination import LimitOffsetPagination
 # Create your views here.
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
@@ -10,9 +10,11 @@ from .models import Cabinet,City
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 # Create your views here.
-
+class CityPagination(LimitOffsetPagination):
+    default_limit=20
 #Вывести все комплексы (admin)
 class CitiesView(ListAPIView):
+    pagination_class=CityPagination
     permission_classes=[IsAdminUser]
     serializer_class=CitySerializer
     queryset=City.objects.all()

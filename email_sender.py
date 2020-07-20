@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 from email.header    import Header
 class email_sender():
     def send_email(self, text): 
-        to_addr="sirokvasov.av@rkvv.ru"
+        to_addr="info@soft-standart.ru"
         from_addr="vodokanal482019@gmail.com"
         msg = MIMEText(text, 'plain', 'utf-8')
         msg['Subject'] = Header('Заявка на ремонт принетра. ОГУП "Липецкий областной водоканал"', 'utf-8')
