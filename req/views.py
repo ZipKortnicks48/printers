@@ -15,6 +15,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from django.db.models.query import QuerySet
 import telebot
+from email_sender import email_sender
 
 #API района!
 
@@ -37,6 +38,7 @@ class ReqView(ListCreateAPIView):
         return reqs
     def create(self, request, *args, **kwargs):
         req = Req(user=self.request.user)
+        req.cabinet=get_object_or_404(Cabinet,id=request.data.get('cabinet'))
         serializer = self.serializer_class(req,data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -126,6 +128,8 @@ class ReqAppointView(APIView):
         serializer = ReqSerializer(req, data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
+            sender=email_sender()
+            sender.send_mail_on_adress('Назначение заявке исполнителя: '+req.shortname,'Заявке '+str(req_id)+' назначен исполнитель\n\nСсылка на заявку http://192.168.28.131/requests/'+str(req_id),req.user.email)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -140,6 +144,8 @@ class ReqCloseView(APIView):
         serializer = ReqSerializer(req, data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
+            sender=email_sender()
+            sender.send_mail_on_adress('Закрытие заявки: '+req.shortname,'Заявка '+str(req_id)+' закрыта\n\nСсылка на заявку http://192.168.28.131/requests/'+str(req_id),req.user.email)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
@@ -160,6 +166,7 @@ class SingleReqView(RetrieveDestroyAPIView):#попытка удалить за�
 
 class CommentView(ListCreateAPIView):
     serializer_class=CommentSerializer
+    permission_classes=(IsAuthenticated,)
     def get_queryset(self):#получаем комментарии к заявке
         req=self.request.query_params.get('req', None)
         comments=Comment.objects.all().filter(req=req)
@@ -175,6 +182,9 @@ class CommentView(ListCreateAPIView):
         serializer = self.serializer_class(comment,data=request.data)
         if serializer.is_valid():
             serializer.save()
+            sender=email_sender()
+            if req.user.id!=self.request.user.id:
+                sender.send_mail_on_adress('Новый комментарий к заявке: '+req.shortname,'К заявке '+str(req_id)+' оставлен новый комментарий\n\n'+request.data['text']+'\n\nСсылка на заявку http://192.168.28.131/requests/'+str(req_id),req.user.email)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

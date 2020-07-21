@@ -6,8 +6,8 @@ class CitySerializer(serializers.ModelSerializer):
         model=City
         fields='__all__'
 class CabinetSerializer(serializers.ModelSerializer):
-    # city=CitySerializer(read_only=True)
+    city=CitySerializer(read_only=True)
     class Meta:
         model=Cabinet
-        fields=('id','number','name')
+        fields=('id','number','name','city')
         # read_only_fields=('city',)

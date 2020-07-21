@@ -11,7 +11,7 @@ class Req(models.Model):
     shortname = models.CharField(max_length=255)
     description=models.TextField()
     date=models.DateField(default=datetime.date.today)
-    deadline=models.DateField()
+    deadline=models.DateField(blank=True,null=True)
     finishdate=models.DateField(blank=True,default=datetime.date.today)
     cabinet=models.ForeignKey(Cabinet,related_name="req_have_cabinet",on_delete=models.CASCADE)
     user=models.ForeignKey(User,related_name="req_have_user",on_delete=models.CASCADE)

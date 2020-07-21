@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone=models.CharField(max_length=10,blank=True,null=True)
     surname=models.CharField(max_length=30,blank=True,null=True)
     city=models.ForeignKey(City,related_name="user_have_city",on_delete=models.CASCADE,blank=True,null=True)
+    email=models.CharField(max_length=100,blank=True,default="")
     objects = UserManager()
     
     USERNAME_FIELD = 'name'
