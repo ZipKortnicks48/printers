@@ -38,7 +38,10 @@ class ReqView(ListCreateAPIView):
         return reqs
     def create(self, request, *args, **kwargs):
         req = Req(user=self.request.user)
-        req.cabinet=get_object_or_404(Cabinet,id=request.data.get('cabinet'))
+        id=request.data.get('cabinet',-1)
+        if type(id) is not int:
+            id=-1
+        req.cabinet=get_object_or_404(Cabinet,id=id)
         serializer = self.serializer_class(req,data=request.data)
         if serializer.is_valid():
             serializer.save()

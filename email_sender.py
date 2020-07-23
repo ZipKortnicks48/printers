@@ -17,7 +17,7 @@ class email_sender():
         except Exception:
             return
     def send_mail_on_adress(self,header,text,email):
-        try: 
+        #try: 
             to_addr=email
             from_addr="vodokanal482019@gmail.com"
             msg = MIMEText(text, 'plain', 'utf-8')
@@ -25,11 +25,11 @@ class email_sender():
             msg['From'] = from_addr     
             msg['To'] = to_addr
             server = smtplib.SMTP_SSL("smtp.gmail.com",port=465)
-            erver.login('vodokanal482019@gmail.com','Djljrfyfk48')
+            server.login('vodokanal482019@gmail.com','Djljrfyfk48')
             server.sendmail(from_addr, to_addr, msg.as_string())
             server.quit()
-        except Exception:
-            return
+        # except Exception:
+        #     return
 # if __name__ == "__main__":
 #     sender=email_sender()
 #     sender.send_email("text") 
