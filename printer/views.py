@@ -23,12 +23,19 @@ class WorkUnitView(ListCreateAPIView):
     permission_classes=[IsAuthenticated,]
     filter_backends=(DjangoFilterBackend,)
     pagination_class=LimitOffsetPagination
-    filterset_fields=('printer','cabinet','status')
+    filterset_fields=('status',)
     serializer_class=WorkUnitSerializer
     def get_queryset(self):
+        workunits=WorkUnit.objects.all()
         city_id=self.request.query_params.get('city',self.request.user.city.id)
-        cabinets=Cabinet.objects.all().filter(city_id=city_id)
-        workunits=WorkUnit.objects.all().filter(cabinet_id__in=Subquery(cabinets.values('id')))
+        printer_searchword=self.request.query_params.get('printer','')
+        if city_id!='0':
+            cabinets=Cabinet.objects.all().filter(city_id=city_id)
+            workunits=workunits.filter(cabinet_id__in=Subquery(cabinets.values('id')))
+        if printer_searchword!='':
+            printer_models=ModelPrinter.objects.filter(name__icontains=printer_searchword)
+            
+            workunits=workunits.filter(printer_id__in=Subquery(printer_models.values('id')))
         return workunits
     def list(self,request):
         queryset=self.filter_queryset(self.get_queryset())
