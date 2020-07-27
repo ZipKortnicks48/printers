@@ -34,8 +34,9 @@ class WorkUnitView(ListCreateAPIView):
             workunits=workunits.filter(cabinet_id__in=Subquery(cabinets.values('id')))
         if printer_searchword!='':
             printer_models=ModelPrinter.objects.filter(name__icontains=printer_searchword)
-            
-            workunits=workunits.filter(printer_id__in=Subquery(printer_models.values('id')))
+            workunits_withprinters=workunits.filter(printer_id__in=Subquery(printer_models.values('id')))
+            workunits_withids=workunits.filter(id=printer_searchword)
+            workunits=workunits_withprinters|workunits_withids
         return workunits
     def list(self,request):
         queryset=self.filter_queryset(self.get_queryset())
