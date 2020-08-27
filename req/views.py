@@ -26,7 +26,7 @@ class ReqView(ListCreateAPIView):
     filter_backends =(filters.SearchFilter,DjangoFilterBackend,filters.OrderingFilter)
     search_fields = ('shortname','id',)
     filterset_fields = ('date', 'cabinet')
-    ordering=('-date')
+    ordering=('-id')
     pagination_class=LimitOffsetPagination
     def get_queryset(self):#получаем заявки для района пользователя
         city_id=self.request.user.city.id
@@ -68,12 +68,10 @@ class ReqView(ListCreateAPIView):
 class ReqAdminView(ListAPIView):
     permission_classes=[IsAdminUser, ]
     serializer_class=ReqSerializer
-    filter_backends =(filters.SearchFilter,
-    #DjangoFilterBackend,
-    filters.OrderingFilter)
+    filter_backends =(filters.SearchFilter,filters.OrderingFilter)
     search_fields = ('shortname','id',)
     #filterset_fields = ('date','status','cabinet')
-    ordering=('-date')
+    ordering=('-id')
     pagination_class=LimitOffsetPagination
     def get_queryset(self):
         city_id=self.request.query_params.get('city',None)
